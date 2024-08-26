@@ -42,7 +42,7 @@ COPY --from=build /app/build/libs/*.jar app.jar
 # 빌드 스테이지에서 생성된 JAR 파일을 다시 한 번 복사 (중복된 명령어로 보임, 제거 가능)
 
 EXPOSE 8080
-# 컨테이너가 9000 포트를 사용함을 명시
+# 컨테이너가 8080 포트를 사용함을 명시
 
 ENTRYPOINT ["java", "-Duser.language=ko", "-Duser.country=KR", "-jar", "app.jar"]
 # Java 애플리케이션을 실행하는 명령어, 한국어 설정을 추가하여 실행
