@@ -84,7 +84,7 @@ jobs:
           COMPOSE: "/home/ubuntu/compose/docker-compose.yml"
         run: |
           sudo echo "${{ secrets.DOCKER_COMPOSE_YML }}" | base64 --decode > $COMPOSE
-          sudo echo "${{ secrets.DOCKERFILE }}" | base64 --decode > FILE
+          sudo echo "${{ secrets.DOCKERFILE }}" | base64 --decode > $FILE
           sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/github-actions-demo
           sudo docker-compose -f $COMPOSE down
           sudo docker-compose -f $COMPOSE up -d
