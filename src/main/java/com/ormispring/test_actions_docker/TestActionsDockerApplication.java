@@ -6,8 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class TestActionsDockerApplication {
 
-    public static void main(String[] args) {
-        SpringApplication.run(TestActionsDockerApplication.class, args);
-    }
-
+  public static void main(String[] args) {
+    SpringApplication.run(TestActionsDockerApplication.class, args);
+  }
 }
