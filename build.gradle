@@ -12,7 +12,7 @@ spotless {
         // 구글 자바 포맷 적용
         googleJavaFormat()
 
-        indentWithTabs(1)
+        indentWithTabs(4)
         indentWithSpaces(2)
         // 공백 제거
         trimTrailingWhitespace()

@@ -27,7 +27,7 @@ jobs:
       run: |
         mkdir -p src/main/resources
         echo "${{ secrets.APPLICATION_YML }}" | base64 --decode > src/main/resources/application.yml
-        echo "${{ secrets.APPLICATION_SECRET_YML }}" | base64 --decode > src/main/resources/application.yml
+        echo "${{ secrets.APPLICATION_SECRET_YML }}" | base64 --decode > src/main/resources/application-secret.yml
         find src
     
     # 2. gradlew 권한 변경    
