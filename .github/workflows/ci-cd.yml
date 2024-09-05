@@ -70,14 +70,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. 최신 이미지를 풀받습니다
-      - name: docker pull
-        run: |
-          sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/github-actions-demo
-
       # 2. docker-compose.yml 전송
       - name: transfer docker-compose.yml
-        uses: appleboy/scp-action@master
+        uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.AWS_HOST}}
           username: ${{ secrets.AWS_USERNAME}}
@@ -93,6 +88,7 @@ jobs:
           username: ${{ secrets.AWS_USERNAME}}
           key: ${{ secrets.AWS_PRIVATE_KEY}}
           script: |
+            sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/github-actions-demo
             sudo docker-compose down
             sudo docker system prune -f
             sudo docker-compose up -d
