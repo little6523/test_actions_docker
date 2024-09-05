@@ -82,7 +82,7 @@ jobs:
         env:
           COMPOSE: "/root/compose/docker-compose.yml"
         run: |
-          echo "${{ secrets.DOCKER_COMPOSE_YML }}" | base64 --decode > $COMPOSE
+          sudo echo "${{ secrets.DOCKER_COMPOSE_YML }}" | base64 --decode > $COMPOSE
           sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/github-actions-demo
           sudo docker-compose -f $COMPOSE down
           sudo docker-compose -f $COMPOSE up -d
