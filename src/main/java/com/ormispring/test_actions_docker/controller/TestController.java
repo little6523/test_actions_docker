@@ -10,4 +10,9 @@ public class TestController {
   public String hello() {
     return "CICD 테스트입니다. 메롱~";
   }
+
+  @GetMapping("/test")
+  public String test() {
+    return "배포 성공했다구요~";
+  }
 }
