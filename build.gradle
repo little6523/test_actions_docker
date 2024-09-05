@@ -11,9 +11,6 @@ spotless {
         removeUnusedImports()
         // 구글 자바 포맷 적용
         googleJavaFormat()
-
-        indentWithTabs(4)
-        indentWithSpaces(2)
         // 공백 제거
         trimTrailingWhitespace()
         // 끝부분 New Line 처리
