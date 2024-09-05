@@ -50,7 +50,7 @@ jobs:
 
     # 3. Docker 이미지 빌드
     - name: docker image build
-      run: docker build -f Dockerfile -t ${{ secrets.DOCKERHUB_USERNAME }}/github-actions-demo .
+      run: docker build -f -t ${{ secrets.DOCKERHUB_USERNAME }}/github-actions-demo .
 
     # 4. DockerHub 로그인
     - name: docker login
@@ -67,7 +67,7 @@ jobs:
   run-docker-image-on-ec2:
     # build-docker-image (위)과정이 완료되어야 실행됩니다.
     needs: build-docker-image
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
 
     steps:
       # 1. 최신 이미지를 풀받습니다
