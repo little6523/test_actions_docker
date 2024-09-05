@@ -103,7 +103,7 @@ jobs:
           username: ${{ secrets.AWS_USERNAME}}
           key: ${{ secrets.AWS_PRIVATE_KEY}}
           source: "dist/docker-compose.yml"
-          target: "/home"
+          target: "/home/ubuntu"
 
       # 3. 최신 이미지를 컨테이너화하여 실행시킵니다
       - name: docker run new container
