@@ -22,6 +22,13 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
+
+    - name: Set Yaml
+      run: |
+        mkdir -p src/main/resources
+        echo "${{ secrets.APPLICATION_YML }}" | base64 --decode > src/main/resources/application.yml
+        echo "${{ secrets.APPLICATION_SECRET_YML }}" | base64 --decode > src/main/resources/application.yml
+        find src
     
     # 2. gradlew 권한 변경    
     - name: Grant execute permission for gradlew
