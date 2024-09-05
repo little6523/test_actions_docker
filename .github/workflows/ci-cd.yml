@@ -80,9 +80,11 @@ jobs:
       # 3. 최신 이미지를 컨테이너화하여 실행시킵니다
       - name: docker run new container
         env:
+          FILE: "/home/ubuntu/compose/Dockerfile"
           COMPOSE: "/home/ubuntu/compose/docker-compose.yml"
         run: |
           sudo echo "${{ secrets.DOCKER_COMPOSE_YML }}" | base64 --decode > $COMPOSE
+          sudo echo "${{ secrets.DOCKERFILE }}" | base64 --decode > $COMPOSE
           sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/github-actions-demo
           sudo docker-compose -f $COMPOSE down
           sudo docker-compose -f $COMPOSE up -d
