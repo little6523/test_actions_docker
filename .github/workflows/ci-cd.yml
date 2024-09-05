@@ -11,57 +11,62 @@ permissions:
 jobs:
   # Spring Boot 애플리케이션을 빌드하여 도커허브에 푸시하는 과정
   build-docker-image:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
-    - uses: actions/checkout@v3
-    # 1. Java 17 세팅
-    - name: Set up JDK 17
-      uses: actions/setup-java@v3
-      with:
-        java-version: '17'
-        distribution: 'temurin'
+      - uses: actions/checkout@v3
+      # 1. Java 17 세팅
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
 
-    - name: Set Yaml
-      run: |
-        mkdir -p src/main/resources
-        echo "${{ secrets.APPLICATION_YML }}" | base64 --decode > src/main/resources/application.yml
-        echo "${{ secrets.APPLICATION_SECRET_YML }}" | base64 --decode > src/main/resources/application-secret.yml
-        find src
+      - name: Set Yaml
+        run: |
+          mkdir -p src/main/resources
+          echo "${{ secrets.APPLICATION_YML }}" | base64 --decode > src/main/resources/application.yml
+          echo "${{ secrets.APPLICATION_SECRET_YML }}" | base64 --decode > src/main/resources/application-secret.yml
+          find src
 
-    - name: Gradle Caching
-      uses: actions/cache@v3
-      with:
-        path: |
-          ~/.gradle/caches
-          ~/.gradle/wrapper
-        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-        restore-keys: |
-          ${{ runner.os }}-gradle-
+      - name: Gradle Caching
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
 
-    # 2. gradlew 권한 변경
-    - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
+      # 2. gradlew 권한 변경
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
 
-      # 2. Spring Boot 애플리케이션 빌드
-    - name: Build with Gradle
-      uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
-      with:
-        arguments: clean bootJar
+        # 2. Spring Boot 애플리케이션 빌드
+      - name: Build with Gradle
+        uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
+        with:
+          arguments: clean bootJar
 
-    # 3. Docker 이미지 빌드
-    - name: docker image build
-      run: docker build -f -t ${{ secrets.DOCKERHUB_USERNAME }}/github-actions-demo .
+      - name: Execute Jar File # 추가
+        run: |
+          sudo kill -9 `sudo lsof -t -i:8080`
+          sudo java -jar /home/ubuntu/actions-runner/_work/test_actions_docker/test_actions_docker/build/libs/linode-github-action-test-0.0.1-SNAPSHOT.jar &
 
-    # 4. DockerHub 로그인
-    - name: docker login
-      uses: docker/login-action@v2
-      with:
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_PASSWORD }}
+      # 3. Docker 이미지 빌드
+      - name: docker image build
+        run: docker build -f -t ${{ secrets.DOCKERHUB_USERNAME }}/github-actions-demo .
 
-    # 5. Docker Hub 이미지 푸시
-    - name: docker Hub push
-      run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/github-actions-demo
+      # 4. DockerHub 로그인
+      - name: docker login
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      # 5. Docker Hub 이미지 푸시
+      - name: docker Hub push
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/github-actions-demo
 
   # 위 과정에서 푸시한 이미지를 ec2에서 풀받아서 실행시키는 과정
   run-docker-image-on-ec2:
@@ -74,7 +79,7 @@ jobs:
       - name: docker pull
         run: |
           sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/github-actions-demo
-#          sudo docker stop $(sudo docker ps -q) 2>/dev/null || true
+      #          sudo docker stop $(sudo docker ps -q) 2>/dev/null || true
 
 
       # 3. 최신 이미지를 컨테이너화하여 실행시킵니다
@@ -88,7 +93,7 @@ jobs:
           sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/github-actions-demo
           sudo docker-compose -f $COMPOSE down
           sudo docker-compose -f $COMPOSE up -d
-#          sudo docker run --name github-actions-demo --rm -d -p 8080:8080 ${{ secrets.DOCKERHUB_USERNAME }}/github-actions-demo
+      #          sudo docker run --name github-actions-demo --rm -d -p 8080:8080 ${{ secrets.DOCKERHUB_USERNAME }}/github-actions-demo
 
       # 4. 미사용 이미지를 정리합니다
       - name: delete old docker image
